@@ -5,7 +5,7 @@ import pickle
 import os
 
 # --- Load Model Artifacts ---
-@st.cache_resource
+#@st.cache_resource
 def load_model_artifacts():
     base_path = "model_artifacts"
     
