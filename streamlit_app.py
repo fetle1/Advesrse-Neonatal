@@ -8,7 +8,7 @@ import os
 # --- Load Model Artifacts ---
 @st.cache_resource
 def load_model_artifacts():
-    model = joblib.load('Model artifact/random_forest_model.joblib')
+    model = joblib.load('model_artifacts/random_forest_model.joblib')
     with open('model_artifacts/label_encoder.pkl', 'rb') as f:
         le = pickle.load(f)
     with open('model_artifacts/feature_columns.pkl', 'rb') as f:
