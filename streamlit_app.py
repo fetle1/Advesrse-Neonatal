@@ -30,6 +30,9 @@ st.write('Enter the patient details to predict adverse neonatal outcome.')
 st.sidebar.header('Patient Input Features')
 
 def user_input_features():
+    gdm_status = st.sidebar.selectbox('GDM Status', original_categorical_data['GDM_status'])
+    iron_supplementation = st.sidebar.selectbox('Iron Supplementation', original_categorical_data['Iron_supplementation'])
+    antenatal_depression = st.sidebar.selectbox('Antenatal Depression', original_categorical_data['Antenatal_depression'])
     age = st.sidebar.slider('Age', 18, 50, 25)
     residence = st.sidebar.selectbox('Residence', original_categorical_data['Residence'])
     occupation = st.sidebar.selectbox('Occupation', original_categorical_data['Occupation'])
@@ -46,6 +49,9 @@ def user_input_features():
         'MUAC': muac,
         'BMI': bmi,
         'Education': education,
+        'GDM_status': gdm_status,
+        'Iron_supplementation': iron_supplementation,
+        'Antenatal_depression': antenatal_depression
     }
     features = pd.DataFrame(data, index=[0])
     return features
