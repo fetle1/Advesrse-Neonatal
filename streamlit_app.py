@@ -28,7 +28,7 @@ st.write('Enter the patient details to predict adverse neonatal outcome.')
 
 # --- User Inputs ---
 st.sidebar.header('Patient Input Features')
-
+st.write("Available categorical keys:", list(original_categorical_data.keys()))
 def user_input_features():
     gdm_status = st.sidebar.selectbox('GDM Status', original_categorical_data['GDM_status'])
     iron_supplementation = st.sidebar.selectbox('Iron Supplementation', original_categorical_data['Iron_supplementation'])
