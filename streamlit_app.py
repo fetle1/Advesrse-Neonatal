@@ -21,14 +21,15 @@ def load_model_artifacts():
     return model, le, feature_columns, original_categorical_data
 
 model, le, feature_columns, original_categorical_data = load_model_artifacts()
-
+# Replace NaN with 'Unknown' in all categorical features
+for key, values in original_categorical_data.items():
+    original_categorical_data[key] = [v if pd.notna(v) else "Unknown" for v in values]
 # --- Streamlit App Layout ---
 st.title('Adverse Neonatal Outcome Prediction App')
 st.write('Enter the patient details to predict adverse neonatal outcome.')
 
 # --- User Inputs ---
 st.sidebar.header('Patient Input Features')
-st.write("Available categorical keys:", list(original_categorical_data.keys()))
 def user_input_features():
     gdm_status = st.sidebar.selectbox('GDM Status', original_categorical_data['GDM_status'])
     iron_supplementation = st.sidebar.selectbox('Iron Supplementation', original_categorical_data['Ironsupelmentatin'])
