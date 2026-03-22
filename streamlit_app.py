@@ -10,10 +10,16 @@ st.set_page_config(
     page_icon="👶",
     layout="centered"
 )
+st.markdown("""
+<div style='background-color:white; padding:10px; border-radius:15px; box-shadow:0 2px 8px rgba(0,0,0,0.1);'>
+""", unsafe_allow_html=True)
+
 st.image(
-    "https://images.unsplash.com/photo-1607746882042-944635dfe10e",
+    "https://assets.clevelandclinic.org/transform/LargeFeatureImage/21510f8a-8787-45c0-b07d-e67a81c9c17b/mom-baby-clo",
     use_container_width=True
 )
+
+st.markdown("</div>", unsafe_allow_html=True)
 # --- Custom CSS Styling ---
 st.markdown("""
 <style>
