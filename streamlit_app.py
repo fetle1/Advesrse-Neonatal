@@ -7,7 +7,6 @@ import os
 # --- Page Config ---
 st.set_page_config(
     page_title="Neonatal Outcome Predictor",
-    page_icon="👶",
     layout="centered"
 )
 st.markdown("""
