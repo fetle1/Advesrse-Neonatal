@@ -10,21 +10,41 @@ st.set_page_config(
     page_icon="👶",
     layout="centered"
 )
-
+st.image(
+    "https://images.unsplash.com/photo-1607746882042-944635dfe10e",
+    use_container_width=True
+)
 # --- Custom CSS Styling ---
 st.markdown("""
 <style>
-.main {
-    background: linear-gradient(to right, #fce4ec, #e3f2fd);
+
+/* Full app background */
+[data-testid="stAppViewContainer"] {
+    background: linear-gradient(to right, #e3f2fd, #fce4ec);
 }
+
+/* Main content block */
+[data-testid="stMain"] {
+    background: transparent;
+}
+
+/* Sidebar */
+[data-testid="stSidebar"] {
+    background: #f8bbd0;
+}
+
+/* Buttons */
 .stButton>button {
-    background-color: #ff80ab;
+    background-color: #64b5f6;
     color: white;
-    border-radius: 10px;
+    border-radius: 12px;
     height: 3em;
     width: 100%;
     font-size: 16px;
+    border: none;
 }
+
+/* Result box */
 .result-box {
     padding: 20px;
     border-radius: 15px;
@@ -32,15 +52,18 @@ st.markdown("""
     text-align: center;
     font-size: 22px;
     font-weight: bold;
-    animation: fadeIn 2s ease-in-out;
+    animation: fadeIn 1.5s ease-in-out;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
+
+/* Animation */
 @keyframes fadeIn {
-    from {opacity: 0;}
-    to {opacity: 1;}
+    from {opacity: 0; transform: translateY(10px);}
+    to {opacity: 1; transform: translateY(0);}
 }
+
 </style>
 """, unsafe_allow_html=True)
-
 # --- Load Model ---
 def load_model_artifacts():
     base_path = "model_artifacts"
