@@ -4,8 +4,44 @@ import joblib
 import pickle
 import os
 
-# --- Load Model Artifacts ---
-#@st.cache_resource
+# --- Page Config ---
+st.set_page_config(
+    page_title="Neonatal Outcome Predictor",
+    page_icon="👶",
+    layout="centered"
+)
+
+# --- Custom CSS Styling ---
+st.markdown("""
+<style>
+.main {
+    background: linear-gradient(to right, #fce4ec, #e3f2fd);
+}
+.stButton>button {
+    background-color: #ff80ab;
+    color: white;
+    border-radius: 10px;
+    height: 3em;
+    width: 100%;
+    font-size: 16px;
+}
+.result-box {
+    padding: 20px;
+    border-radius: 15px;
+    background-color: #ffffff;
+    text-align: center;
+    font-size: 22px;
+    font-weight: bold;
+    animation: fadeIn 2s ease-in-out;
+}
+@keyframes fadeIn {
+    from {opacity: 0;}
+    to {opacity: 1;}
+}
+</style>
+""", unsafe_allow_html=True)
+
+# --- Load Model ---
 def load_model_artifacts():
     base_path = "model_artifacts"
     
@@ -21,15 +57,24 @@ def load_model_artifacts():
     return model, le, feature_columns, original_categorical_data
 
 model, le, feature_columns, original_categorical_data = load_model_artifacts()
-# Replace NaN with 'Unknown' in all categorical features
+
+# Fix NaNs
 for key, values in original_categorical_data.items():
     original_categorical_data[key] = [v if pd.notna(v) else "Unknown" for v in values]
-# --- Streamlit App Layout ---
-st.title('Adverse Neonatal Outcome Prediction App')
-st.write('Enter the patient details to predict adverse neonatal outcome.')
 
-# --- User Inputs ---
-st.sidebar.header('Patient Input Features')
+# --- Header Section ---
+st.markdown("<h1 style='text-align: center;'>👶 Adverse Neonatal Outcome Predictor</h1>", unsafe_allow_html=True)
+
+st.image(
+    "https://images.unsplash.com/photo-1604917877934-07d8d248d396",
+    use_container_width=True
+)
+
+st.markdown("<p style='text-align:center;'>Enter maternal details to assess neonatal risk</p>", unsafe_allow_html=True)
+
+# --- Sidebar Input ---
+st.sidebar.header('📝 Patient Information')
+
 def user_input_features():
     gdm_status = st.sidebar.selectbox('GDM Status', original_categorical_data['GDM_status'])
     iron_supplementation = st.sidebar.selectbox('Iron Supplementation', original_categorical_data['Ironsupelmentatin'])
@@ -54,48 +99,55 @@ def user_input_features():
         'Iron_supplementation': iron_supplementation,
         'Antenatal_depression': antenatal_depression
     }
-    features = pd.DataFrame(data, index=[0])
-    return features
+    return pd.DataFrame(data, index=[0])
 
 input_df = user_input_features()
 
-st.subheader('User Input Features')
-st.write(input_df)
+# --- Show Inputs in Card ---
+st.markdown("### 📋 Patient Summary")
+st.dataframe(input_df, use_container_width=True)
 
-# --- Data Preprocessing for Prediction ---
-# Create a DataFrame with all expected columns and fill with zeros
+# --- Preprocessing ---
 processed_input = pd.DataFrame(0, index=[0], columns=feature_columns)
 
-# Fill numerical features
 for col in ['Age', 'weight_first_ANC', 'MUAC', 'BMI']:
     if col in processed_input.columns:
         processed_input[col] = input_df[col].values[0]
 
-# Handle categorical features using one-hot encoding
 for col in original_categorical_data.keys():
     if col in input_df.columns:
         val = input_df[col].values[0]
-        # Create dummy column name, e.g., 'Residence_Urban'
         dummy_col = f"{col}_{val}"
         if dummy_col in processed_input.columns:
             processed_input[dummy_col] = 1
 
-# Ensure the order of columns matches the training data
 processed_input = processed_input[feature_columns]
 
-# --- Prediction ---
-prediction = model.predict(processed_input)
-prediction_proba = model.predict_proba(processed_input)
+# --- Predict Button ---
+if st.button("🔍 Predict Outcome"):
 
-st.subheader('Prediction')
-predicted_class = le.inverse_transform(prediction)[0]
-st.write(predicted_class)
+    prediction = model.predict(processed_input)
+    prediction_proba = model.predict_proba(processed_input)
 
-st.subheader('Prediction Probability')
-probability_df = pd.DataFrame(prediction_proba, columns=le.classes_)
-st.write(probability_df)
+    predicted_class = le.inverse_transform(prediction)[0]
 
+    st.markdown("## 🎯 Prediction Result")
+
+    # Animated Result Box
+    if predicted_class.lower() == "adverse":
+        st.markdown(f"<div class='result-box'>⚠️ High Risk: {predicted_class}</div>", unsafe_allow_html=True)
+        st.error("This indicates a higher likelihood of adverse neonatal outcome.")
+    else:
+        st.markdown(f"<div class='result-box'>✅ Low Risk: {predicted_class}</div>", unsafe_allow_html=True)
+        st.success("This indicates a lower likelihood of adverse neonatal outcome.")
+
+    # Probability Bar
+    st.markdown("### 📊 Prediction Probability")
+    prob_df = pd.DataFrame(prediction_proba, columns=le.classes_)
+    st.bar_chart(prob_df.T)
+
+# --- Footer ---
 st.markdown("""
 ---
-**Note:** This app predicts the likelihood of an adverse neonatal outcome based on the provided inputs.
+💡 *This tool supports clinical decision-making but does not replace professional judgment.*
 """)
