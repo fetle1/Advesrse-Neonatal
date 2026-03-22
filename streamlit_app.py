@@ -93,10 +93,7 @@ for key, values in original_categorical_data.items():
 # --- Header Section ---
 st.markdown("<h1 style='text-align: center;'>👶 Adverse Neonatal Outcome Predictor</h1>", unsafe_allow_html=True)
 
-st.image(
-    "https://images.unsplash.com/photo-1604917877934-07d8d248d396",
-    use_container_width=True
-)
+
 
 st.markdown("<p style='text-align:center;'>Enter maternal details to assess neonatal risk</p>", unsafe_allow_html=True)
 
